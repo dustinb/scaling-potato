@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: scaling-potato
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scaling-potato
+  template:
+    metadata:
+      labels:
+        app: scaling-potato
+        pod: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: scaling-potato
+spec:
+  ports:
+    - port: 6379
+      name: redis
+  clusterIP: None
+  selector:
+    pod: redis

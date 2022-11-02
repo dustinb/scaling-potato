@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: scaling-potato
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scaling-potato
+  template:
+    metadata:
+      labels:
+        app: scaling-potato
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8011"
+    spec:
+      containers:
+        - name: worker
+          image: oldbute/scaling-potato:worker
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8011
+          env:
+            - name: ADD
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-config
+                  key: add
+            - name: SPEED
+              valueFrom:
+                configMapKeyRef:
+                  name: worker-config
+                  key: speed
